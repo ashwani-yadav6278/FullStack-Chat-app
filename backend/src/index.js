@@ -28,10 +28,18 @@ app.use(cors({
     credentials:true,
 })
 );
-
+console.log("✅ Registering routes...")
+app.use("/api/auth",authRoutes);
+try {
+    
+app.use("/api/messages",messageRoutes);
+} catch (error) {
+    console.error("❌ Failed to register message routes:", err);
+    
+}
 app.use("/api/auth",authRoutes);
 app.use("/api/messages",messageRoutes);
-
+console.log("✅ Routes registered");
 // for deploy
 if(process.env.NODE_ENV==="production"){
     app.use(express.static(path.join(__dirname,"../frontend/dist"))); 
