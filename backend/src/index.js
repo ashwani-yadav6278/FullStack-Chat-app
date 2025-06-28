@@ -29,7 +29,7 @@ app.use(cors({
 })
 );
 console.log("✅ Registering routes...")
-// app.use("/api/auth",authRoutes);
+app.use("/api/auth",authRoutes);
 try {
     
 app.use("/api/messages",messageRoutes);
