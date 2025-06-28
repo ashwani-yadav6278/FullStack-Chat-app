@@ -29,16 +29,16 @@ app.use(cors({
 })
 );
 console.log("✅ Registering routes...")
-app.use("/api/auth",authRoutes);
+// app.use("/api/auth",authRoutes);
 try {
     
-app.use("/api/messages",messageRoutes);
+// app.use("/api/messages",messageRoutes);
 } catch (error) {
     console.error("❌ Failed to register message routes:", err);
     
 }
-app.use("/api/auth",authRoutes);
-app.use("/api/messages",messageRoutes);
+// app.use("/api/auth",authRoutes);
+// app.use("/api/messages",messageRoutes);
 console.log("✅ Routes registered");
 // for deploy
 if(process.env.NODE_ENV==="production"){
