@@ -32,7 +32,7 @@ console.log("✅ Registering routes...")
 app.use("/api/auth",authRoutes);
 try {
     
-app.use("/api/messages",messageRoutes);
+// app.use("/api/messages",messageRoutes);
 } catch (error) {
     console.error("❌ Failed to register message routes:", err);
     
