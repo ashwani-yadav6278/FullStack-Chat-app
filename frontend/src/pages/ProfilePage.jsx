@@ -1,41 +1,37 @@
-import { useState } from 'react';
-import {Camera,User,Mail} from 'lucide-react'
-import { useAuthStore } from '../store/authStore'
-import imageCompression from 'browser-image-compression';
+import { useState } from "react";
+import { Camera, User, Mail, Lock } from "lucide-react";
+import { useAuthStore } from "../store/authStore";
+import imageCompression from "browser-image-compression";
+import { Link } from "react-router-dom";
 
 const ProfilePage = () => {
-  const{authUser,updateProfile,isUpdatingProfile}=useAuthStore();
+  const { authUser, updateProfile, isUpdatingProfile } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
-  
-const handleImageUpload=async(e)=>{
-  const file=e.target.files[0];
-   
 
-  if(!file) return;
-try {
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
 
-  const options={
-    maxSizeMB:0.5,
-    maxWidthOrHeight: 800,
-    useWebWorker: true,
+    if (!file) return;
+    try {
+      const options = {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 800,
+        useWebWorker: true,
+      };
+      const compressedFile = await imageCompression(file, options);
+      const reader = new FileReader();
 
-  }
-   const compressedFile = await imageCompression(file, options);
-    const reader=new FileReader();
+      reader.readAsDataURL(compressedFile);
 
-  reader.readAsDataURL(compressedFile);
-
-  reader.onload=async()=>{
-    const base64Image=reader.result;
-    setSelectedImg(base64Image);
-    await updateProfile({profilePic:base64Image})
-  }
-} catch (error) {
-  
-}
-  
-
-}
+      reader.onload = async () => {
+        const base64Image = reader.result;
+        setSelectedImg(base64Image);
+        await updateProfile({ profilePic: base64Image });
+      };
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="h-screen pt-20">
@@ -48,12 +44,12 @@ try {
 
           {/* avatar upload section */}
 
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col  items-center gap-4">
             <div className="relative">
               <img
                 src={selectedImg || authUser.profilePic || "profile.jpg"}
                 alt="Profile"
-                className="size-32 rounded-full object-cover border-4 "
+                className="size-32 rounded-full   object-cover border-4 "
               />
               <label
                 htmlFor="avatar-upload"
@@ -62,7 +58,9 @@ try {
                   bg-base-content hover:scale-105
                   p-2 rounded-full cursor-pointer 
                   transition-all duration-200
-                  ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
+                  ${
+                    isUpdatingProfile ? "animate-pulse pointer-events-none" : ""
+                  }
                 `}
               >
                 <Camera className="w-5 h-5 text-base-200" />
@@ -77,7 +75,9 @@ try {
               </label>
             </div>
             <p className="text-sm text-zinc-400">
-              {isUpdatingProfile ? "Uploading..." : "Click the camera icon to update your photo"}
+              {isUpdatingProfile
+                ? "Uploading..."
+                : "Click the camera icon to update your photo"}
             </p>
           </div>
 
@@ -87,7 +87,9 @@ try {
                 <User className="w-4 h-4" />
                 Full Name
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.fullName}</p>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
+                {authUser?.fullName}
+              </p>
             </div>
 
             <div className="space-y-1.5">
@@ -95,7 +97,17 @@ try {
                 <Mail className="w-4 h-4" />
                 Email Address
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.email}</p>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
+                {authUser?.email}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-base-content/60">
+
+                <Link to="/updatepassword" className="link text-secondary link-primary">
+                  Update your password
+                </Link>
+              </p>
             </div>
           </div>
 
@@ -115,7 +127,7 @@ try {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ProfilePage
+export default ProfilePage;

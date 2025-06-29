@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { MessageSquare,Mail,User,Lock,Eye,EyeOff,Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import AuthImagePattern from '../components/AuthImagePttern';
@@ -23,10 +23,12 @@ const validateForm=()=>{
     if (!formData.email.trim()) return toast.error("Email is required");
     if (!/\S+@\S+\.\S+/.test(formData.email)) return toast.error("Invalid email format");
     if (!formData.password) return toast.error("Password is required");
-    if (formData.password.length < 6) return toast.error("Password must be at least 8 characters");
+    if (formData.password.length < 8) return toast.error("Password must be at least 8 characters");
 
     return true;
 }
+
+
 const handleSubmit=(e)=>{
   e.preventDefault()
   login(formData)

@@ -105,16 +105,41 @@ export const updateProfile = async (req, res) => {
       { profilePic: uploadResponse.secure_url },
       { new: true }
     );
-    res
-      .status(200)
-      .json({
-        _id: updatedUser._id,
-        fullName: updatedUser.fullName,
-        email: updatedUser.email,
-        profilePic: updatedUser.profilePic,
-      });
+    res.status(200).json({
+      _id: updatedUser._id,
+      fullName: updatedUser.fullName,
+      email: updatedUser.email,
+      profilePic: updatedUser.profilePic,
+    });
   } catch (error) {
     console.log("Error in Update ProfilePic controller :", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { email, oldpassword, newpassword } = req.body;
+
+  try {
+    if (!email || !oldpassword || !newpassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email" });
+    }
+    const isPasswordCorrect = await bcrypt.compare(oldpassword, user.password);
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ message: "Invalid  Password!" });
+    }
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(newpassword, salt);
+    const updatedUser = await User.findByIdAndUpdate(user._id, {password:hashedPassword},{new:true} );
+    await updatedUser.save();
+    res.status(200).json({ message: "Password updated successfully" });
+
+  } catch (error) {
+    console.log("Error in resetPassword controller :", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };

@@ -3,6 +3,7 @@ import axiosInstance from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
+
 // Don't include `/api` here; Socket.IO needs the root server URL
 const Base_Url = import.meta.env.MODE ==="development" ? "http://localhost:5000":"/";
 
@@ -15,6 +16,7 @@ export const useAuthStore = create((set, get) => ({
   onlineUsers: [],
   socket: null,
   isCheckingAuth: true,
+  isResetPassword:false,
 
   checkAuth: async () => {
     try {
@@ -55,6 +57,26 @@ export const useAuthStore = create((set, get) => ({
       toast.error(error?.response?.data?.message || "Login Failed");
     } finally {
       set({ isLogingIn: false });
+    }
+  },
+
+  resetPassword:async(data)=>{
+      
+    set({isResetPassword:true})
+    try {
+      const res= await axiosInstance.post("/auth/update-password",data);
+      set({authUser:res.data});
+      
+      toast.success("Password reset successfully");
+      
+      
+      return true;
+    } catch (error) {
+      const message = error?.response?.data?.message || "Password reset failed";
+    toast.error(message); // 🔥 Show backend error to user
+    throw new Error(message); // 💥 So UI knows it failed
+    }finally{
+      set({isResetPassword:false})
     }
   },
 
