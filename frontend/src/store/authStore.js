@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import axiosInstance from "../lib/axios.js";
 import toast from "react-hot-toast";
-import {io} from 'socket.io-client';
+import { io } from "socket.io-client";
 
+// Don't include `/api` here; Socket.IO needs the root server URL
+const Base_Url = import.meta.env.MODE ==="development" ? "http://localhost:5000":"/";
 
-const Base_Url=import.meta.env.MODE === "development"? "http://localhost:5000/api" : "/" ;
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -12,9 +13,7 @@ export const useAuthStore = create((set, get) => ({
   isLogingIn: false,
   isUpdatingProfile: false,
   onlineUsers: [],
-  //  socket
   socket: null,
-
   isCheckingAuth: true,
 
   checkAuth: async () => {
@@ -36,11 +35,10 @@ export const useAuthStore = create((set, get) => ({
       const res = await axiosInstance.post("/auth/signup", data);
       set({ authUser: res.data });
       toast.success("Account created successfully");
-      // for connect from socket
       get().connectSocket();
     } catch (error) {
       console.log("Error in signup authStore :", error.message);
-      toast.error(error?.response?.data?.message || "signup Failed");
+      toast.error(error?.response?.data?.message || "Signup Failed");
     } finally {
       set({ isSigningUp: false });
     }
@@ -51,25 +49,23 @@ export const useAuthStore = create((set, get) => ({
     try {
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data });
-      toast.success("User Logged in successfully");
-      // for connect to socket
+      toast.success("User logged in successfully");
       get().connectSocket();
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error?.response?.data?.message || "Login Failed");
     } finally {
       set({ isLogingIn: false });
     }
   },
 
-  logout:  () => {
+  logout: async () => {
     try {
-       axiosInstance.post("/auth/logout");
+      await axiosInstance.post("/auth/logout");
       set({ authUser: null });
       toast.success("User logged out successfully");
-      // for disconnect from socket
       get().disconnectSocket();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message || "Logout failed");
     }
   },
 
@@ -80,30 +76,46 @@ export const useAuthStore = create((set, get) => ({
       set({ authUser: res.data });
       toast.success("Profile picture updated successfully");
     } catch (error) {
-      console.log("Profile update error:", error); //
-      toast.error(error.response.data.message);
+      console.log("Profile update error:", error);
+      toast.error(error?.response?.data?.message || "Update failed");
     } finally {
       set({ isUpdatingProfile: false });
     }
   },
-  connectSocket: ()=>{
-    const {authUser}=get();
-    if(!authUser || get().connected) return ;
-    const socket=io(Base_Url,{
-      query:{
-        userId:authUser._id
-      }
-    })
-    socket.connect();
-    console.log("✅ Socket connected:", socket.id);
-    set({socket:socket})
 
-    // too show Online Users
-    socket.on("getOnlineUsers",(userIds)=>{
-      set({onlineUsers:userIds})
-    })
+  connectSocket: () => {
+    const { authUser } = get();
+    if (!authUser || get().socket) return;
+
+    const socket = io(Base_Url, {
+      query: {
+        userId: authUser._id,
+      },
+      withCredentials: true,
+    });
+
+    // Wait for proper connection before logging
+    socket.on("connect", () => {
+      console.log("✅ Socket connected:", socket.id);
+      set({ socket });
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("❌ Socket connection error:", err.message);
+    });
+
+    socket.on("getOnlineUsers", (userIds) => {
+      console.log("🟢 Online users updated:", userIds);
+      set({ onlineUsers: userIds });
+    });
   },
-  disconnectSocket: ()=>{
-    if(get().socket?.connected) get().socket.disconnect();
+
+  disconnectSocket: () => {
+    const socket = get().socket;
+    if (socket?.connected) {
+      socket.disconnect();
+      console.log("🔌 Socket disconnected");
+    }
+    set({ socket: null });
   },
 }));
