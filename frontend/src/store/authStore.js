@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
 
-// Don't include `/api` here; Socket.IO needs the root server URL
+// Not include  `/api` here; Socket.IO needs the root server URL
 const Base_Url = import.meta.env.MODE ==="development" ? "http://localhost:5000":"/";
 
 
@@ -73,8 +73,8 @@ export const useAuthStore = create((set, get) => ({
       return true;
     } catch (error) {
       const message = error?.response?.data?.message || "Password reset failed";
-    toast.error(message); // 🔥 Show backend error to user
-    throw new Error(message); // 💥 So UI knows it failed
+    toast.error(message); //  Show backend error to user
+    throw new Error(message); //  So UI knows it failed
     }finally{
       set({isResetPassword:false})
     }
@@ -118,7 +118,7 @@ export const useAuthStore = create((set, get) => ({
 
     // Wait for proper connection before logging
     socket.on("connect", () => {
-      console.log("✅ Socket connected:", socket.id);
+      
       set({ socket });
     });
 
@@ -127,7 +127,7 @@ export const useAuthStore = create((set, get) => ({
     });
 
     socket.on("getOnlineUsers", (userIds) => {
-      console.log("🟢 Online users updated:", userIds);
+
       set({ onlineUsers: userIds });
     });
   },
@@ -136,7 +136,7 @@ export const useAuthStore = create((set, get) => ({
     const socket = get().socket;
     if (socket?.connected) {
       socket.disconnect();
-      console.log("🔌 Socket disconnected");
+      
     }
     set({ socket: null });
   },

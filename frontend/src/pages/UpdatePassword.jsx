@@ -30,13 +30,13 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
   e.preventDefault();
 
-//   if (!validateForm()) return;
+
 
   try {
     await resetPassword(formData);
-    navigate('/login'); // ✅ Redirect only on success
+    navigate('/login'); //Redirect only on success
   } catch (err) {
-    // No need for toast here; it's already shown in the store
+    
     console.error("Reset failed:", err.message);
   }
 };

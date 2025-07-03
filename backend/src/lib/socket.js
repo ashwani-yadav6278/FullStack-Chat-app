@@ -22,7 +22,7 @@ const userSocketMap={}; // {userId:socketId}
 
 
 io.on("connection",(socket)=>{
-  console.log("A new User connected",socket.id);
+  
 
   const userId=socket.handshake.query.userId;
 
@@ -56,7 +56,7 @@ io.on("connection",(socket)=>{
   })
 
   socket.on("disconnect",()=>{
-    console.log("A user disconnected",socket.id);
+
     if(userId && userSocketMap[userId]){  //We only remove the tab that disconnected, not the whole user.
       userSocketMap[userId].delete(socket.id);
       if(userSocketMap[userId].size===0){

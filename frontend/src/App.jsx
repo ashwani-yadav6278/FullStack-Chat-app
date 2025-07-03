@@ -18,10 +18,10 @@ const App = () => {
   useEffect(()=>{
     checkAuth();
   },[checkAuth])
-  console.log({authUser});
+
 
   useEffect(() => {
-     console.log("Theme changing to:", theme);
+     
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
