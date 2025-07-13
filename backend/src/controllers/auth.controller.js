@@ -50,6 +50,7 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  console.log("Body received:", req.body); 
   const { email, password } = req.body;
 
   try {
