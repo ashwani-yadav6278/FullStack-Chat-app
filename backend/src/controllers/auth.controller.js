@@ -50,6 +50,7 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  console.log("Login route hit");
   console.log("Body received:", req.body); 
   const { email, password } = req.body;
 
@@ -64,9 +65,9 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials____" });
     }
-
+    console.log("User authenticated, generating token");
     generateToken(user._id, res);
-
+       user.password = undefined;
     res.status(201).json({
       _id: user._id,
       fullName: user.fullName,
