@@ -28,7 +28,7 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    console.log("✅ Creating user with:", { fullName, email });
+    console.log("Creating user with:", { fullName, email });
     if (newUser) {
       // generate jwt token
 
@@ -64,7 +64,7 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials____" });
     }
-    console.log("✅ login user with:", { fullName, email });
+    console.log(" login user with:", { fullName, email });
     generateToken(user._id, res);
 
     res.status(201).json({
@@ -84,7 +84,7 @@ export const logout = (req, res) => {
     res.cookie("jwt", "", { maxAge: 0 });
     res.status(200).json({ message: "User Logged out successfully" });
   } catch (error) {
-    console.log("Error in logOut controller:", error.message);
+    console.log("Error in logOut controller:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -113,7 +113,7 @@ export const updateProfile = async (req, res) => {
       profilePic: updatedUser.profilePic,
     });
   } catch (error) {
-    console.log("Error in Update ProfilePic controller :", error.message);
+    console.log("Error in Update ProfilePic controller :", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -140,7 +140,7 @@ export const resetPassword = async (req, res) => {
     res.status(200).json({ message: "Password updated successfully" });
 
   } catch (error) {
-    console.log("Error in resetPassword controller :", error.message);
+    console.log("Error in resetPassword controller :", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -152,7 +152,7 @@ export const checkAuth = (req, res) => {
     }
     res.status(200).json(req.user);
   } catch (error) {
-    console.log("Error in checkAuth controller:", error.message);
+    console.log("Error in checkAuth controller:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
