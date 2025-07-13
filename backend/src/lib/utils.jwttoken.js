@@ -1,10 +1,10 @@
-import jwt from "jsonwebtoken";
-
 const generateToken = (userId, res) => {
   try {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
+
+    console.log("🔒 JWT created:", token);
 
     res.cookie("jwt", token, {
       httpOnly: true,
@@ -12,13 +12,9 @@ const generateToken = (userId, res) => {
       sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    
 
-    console.log("✅ Cookie set successfully");
-    return token;
-  } catch (err) {
-    console.error("❌ Error in generateToken:", err.message);
+    console.log("🍪 Cookie set successfully");
+  } catch (error) {
+    console.error("❌ Error generating token:", error.message);
   }
 };
-
-export default generateToken;

@@ -50,13 +50,14 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  console.log("Login route hit");
-  console.log("Body received:", req.body);
+  console.log("🔐 Login route hit");
+  console.log("📥 Request body:", req.body);
 
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
+    console.log("🔍 Fetched user:", user);
 
     if (!user) {
       console.log("❌ User not found");
@@ -64,30 +65,28 @@ export const login = async (req, res) => {
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    console.log("✅ Password match:", isPasswordCorrect);
+
     if (!isPasswordCorrect) {
-      console.log("❌ Incorrect password");
-      return res.status(400).json({ message: "Invalid credentials____" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    console.log("✅ User authenticated, generating token...");
-    
-    // Set JWT cookie before sending response
+    console.log("🔑 Generating token...");
     generateToken(user._id, res);
 
-    // Remove password before sending response
-    const safeUser = {
+    console.log("✅ Sending response...");
+    res.status(200).json({
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
       profilePic: user.profilePic,
-    };
-
-    return res.status(200).json(safeUser); //
+    });
   } catch (error) {
-    console.error("❌ Error in login controller:", error.message);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error("🔥 Error in login controller:", error.message);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 export const logout = (req, res) => {
   try {
