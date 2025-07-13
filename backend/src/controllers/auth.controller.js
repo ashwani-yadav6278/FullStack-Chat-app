@@ -147,6 +147,9 @@ export const resetPassword = async (req, res) => {
 
 export const checkAuth = (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(400).json({ message: "Not authenticated" });
+    }
     res.status(200).json(req.user);
   } catch (error) {
     console.log("Error in checkAuth controller:", error.message);
