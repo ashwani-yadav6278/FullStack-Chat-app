@@ -51,32 +51,41 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   console.log("Login route hit");
-  console.log("Body received:", req.body); 
+  console.log("Body received:", req.body);
+
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
 
     if (!user) {
+      console.log("❌ User not found");
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
+      console.log("❌ Incorrect password");
       return res.status(400).json({ message: "Invalid credentials____" });
     }
-    console.log("User authenticated, generating token");
+
+    console.log("✅ User authenticated, generating token...");
+    
+    // Set JWT cookie before sending response
     generateToken(user._id, res);
-       user.password = undefined;
-    res.status(201).json({
+
+    // Remove password before sending response
+    const safeUser = {
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
       profilePic: user.profilePic,
-    });
+    };
+
+    return res.status(200).json(safeUser); //
   } catch (error) {
-    console.log("Error in log in controller:", error.message);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("❌ Error in login controller:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
