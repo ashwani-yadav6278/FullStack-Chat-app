@@ -18,7 +18,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
-const allowedOrigins = "http://localhost:5173";
+const allowedOrigins = ["http://localhost:5173","https://full-stack-chat-app-6b5l.vercel.app/login"];
 
 app.use(
   cors({
