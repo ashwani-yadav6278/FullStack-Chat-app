@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 
 
 // Not include  `/api` here; Socket.IO needs the root server URL
-const Base_Url = "https://full-stack-chat-app-liart.vercel.app/api";
+const Base_Url ="https://full-stack-chat-app-liart.vercel.app/api";
 
 
 
