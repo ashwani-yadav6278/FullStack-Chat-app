@@ -28,6 +28,7 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
     });
+    console.log("✅ Creating user with:", { fullName, email });
     if (newUser) {
       // generate jwt token
 
@@ -44,7 +45,7 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "Failed to create user" });
     }
   } catch (error) {
-    console.log("Error in signup controller:", error.message);
+    console.log("Error in signup controller:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -63,7 +64,7 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials____" });
     }
-
+    console.log("✅ login user with:", { fullName, email });
     generateToken(user._id, res);
 
     res.status(201).json({
@@ -73,7 +74,7 @@ export const login = async (req, res) => {
       profilePic: user.profilePic,
     });
   } catch (error) {
-    console.log("Error in log in controller:", error.message);
+    console.log("Error in log in controller:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
