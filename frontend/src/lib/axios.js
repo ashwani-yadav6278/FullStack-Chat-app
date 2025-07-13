@@ -1,7 +1,7 @@
  import axios from "axios";
 axios.defaults.withCredentials = true;
   const axiosInstance=axios.create({
-    baseURL: "https://full-stack-chat-app-delta.vercel.app/api",
+    baseURL: import.meta.env.MODE === "development" ? "http://localhost:5001/api" : "/api",
     withCredentials:true,
  });
 
