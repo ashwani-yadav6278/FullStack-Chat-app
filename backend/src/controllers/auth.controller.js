@@ -28,7 +28,7 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    console.log("Creating user with:", { fullName, email });
+    
     if (newUser) {
       // generate jwt token
 
@@ -64,7 +64,7 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials____" });
     }
-    console.log(" login user with:", { fullName, email });
+    
     generateToken(user._id, res);
 
     res.status(201).json({
