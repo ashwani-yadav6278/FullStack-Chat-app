@@ -59,42 +59,48 @@ export const useChatStore = create((set, get) => ({
     const socket = useAuthStore.getState().socket;
     const { authUser } = useAuthStore.getState();
     if (!socket || !authUser) {
-      console.warn("❗ Socket or authUser missing. Skipping subscription.");
+      console.warn("Socket or authUser missing. Skipping subscription.");
       return;
     }
     socket.off("newMessage"); // clean previous listener
-    console.log("🧲 Attaching listener to socket");
+    console.log("Attaching listener to socket");
 
     socket.on("newMessage", (newMessage) => {
-      console.log("📥 New message received:", newMessage); // 🔥 Check if this ever fires
+      console.log("New message received:", newMessage); // check if this ever fires
       const { selectedUser, messages } = get(); // always get fresh state
 
-      console.log("📌 Current selected user:", selectedUser?._id);
-      console.log("🧠 Auth user:", authUser._id);
+      console.log("Current selected user:", selectedUser?._id);
+      console.log("Auth user:", authUser._id);
 
       const isCurrentChat =
         (newMessage.senderId === selectedUser?._id &&
           newMessage.receiverId === authUser._id) ||
         (newMessage.receiverId === selectedUser?._id &&
           newMessage.senderId === authUser._id);
-      console.log("🟢 Is current chat?", isCurrentChat);
+      console.log("Is current chat?", isCurrentChat);
 
       if (isCurrentChat) {
-        console.log("✅ Appending to current messages");
+        console.log("Appending to current messages");
         set({ messages: [...messages, newMessage] });
       } else {
         console.log("New message for another chat. Ignored.");
         get().increamentUnreadCoount(newMessage.senderId);
-        console.log("📩 New message for another chat. Count +1");
+        console.log("New message for another chat. Count +1");
       }
     });
-    console.log("✅ Listener attached to socket");
+    console.log("Listener attached to socket");
   },
 
   unSubscribeFromMessages: () => {
-    const socket = useAuthStore.getState().socket;
-    socket.off("newMessage");
-  },
+  const socket = useAuthStore.getState().socket;
+  if (!socket) {
+    console.warn("Tried to unsubscribe but socket is null");
+    return;
+  }
+
+  console.log("Unsubscribing from newMessage listener");
+  socket.off("newMessage"); 
+},
 
   // to do optimize later
   getSelectedUser: (selectedUser) => {
